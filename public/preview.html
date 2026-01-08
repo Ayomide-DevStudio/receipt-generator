@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipt</title>
+    <script>
+        if (!navigator.onLine){
+            document.write('<script src="assets/css/tailwindcdn.js"><\/script>');
+        } else (
+             document.write('<script src="https://cdn.tailwindcss.com"><\/script>')
+        )
+     </script>
+
+     <script>
+        function loadScript(src, fallback) {
+            const script = document.createElement('script');
+            script.src = src;
+            script.onerror = () => {
+                console.log("CDN failed, loading local:", fallback);
+                const local = document.createElement('script');
+                local.src = fallback;
+                document.head.appendChild(local);
+            };
+            document.head.appendChild(script);
+        }
+
+        // Load libraries: CDN → fallback to local
+        loadScript(
+            'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js',
+            'libs/html2pdf.bundle.min.js'
+        );
+        loadScript(
+            'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',
+            'libs/html2canvas.min.js'
+        );
+    </script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 min-h-screen p-8" onload="loadReceipt()">
+    <div class="max-w-2xl mx-auto bg-white dark:bg-white rounded-lg shadow-xl p-8">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+            <h1 class="text-3xl font-bold text-center mb-8">RECEIPT</h1>
+            <button onclick="window.print()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                Print Receipt
+            </button>
+        </div>
+       
+        <div id="receipt-content" class="space-y-4 text-lg"></div>
+
+    </div>
+
+        <div class="mt-12 text-center">
+            <button id="downloadPdf" class="px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700">
+                Save as PDF
+            </button>
+            <button id="downloadImage" class="px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700">
+                Save as Image
+            </button>
+        </div>
+
+        <p id="loading-msg" class="text-center text-gray-500 mt-6">Loading download tools...</p>
+
+        <footer class="flex justify-center">
+            <p class="px-1 py-1 bg-transparent text-center text-gray-700 dark:text-gray-300">
+                powered by Ayomide DevStudio 
+                <!-- <a href="www.ayomidedevstudio.rf.gd"> →</a> -->
+            </p>
+        </footer>
+
+ <script src="/core/amountTowords.js"></script>
+ <script  src="assets/js/preview.js"></script>
+ 
+</body>
+</html>

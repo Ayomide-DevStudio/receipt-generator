@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipt History</title>
+    <script>
+        if (!navigator.onLine){
+            document.write('<script src="assets/css/tailwindcdn.js"><\/script>');
+        } else (
+             document.write('<script src="https://cdn.tailwindcss.com"><\/script>')
+        )
+     </script>
+</head>
+<body>
+    
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+                
+                <!-- Title -->
+                <h2 class="text-2xl md:text-3xl font-bold text-blue-800 dark:text-gray-700">
+                    Receipts History
+                </h2>
+
+                <!-- Buttons -->
+                <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                    <button
+                        id="clear"
+                        class="w-full sm:w-auto px-5 py-2.5 bg-red-100 dark:bg-red-900/30
+                            text-red-600 dark:text-red-400 font-semibold rounded-md
+                            hover:bg-red-600 hover:text-white transition
+                            focus:outline-none text-sm">
+                        Clear All
+                    </button>
+
+                    <button
+                        id="openModalBtn"
+                        class="w-full sm:w-auto px-5 py-2.5 bg-gray-100 dark:bg-gray-800
+                            text-gray-700 dark:text-gray-300 font-semibold rounded-md
+                            hover:bg-gray-300 dark:hover:bg-gray-700 transition
+                            focus:outline-none text-sm">
+                        Clear
+                    </button>
+                </div>
+
+            </div>
+
+        <p id="result-list" class="px-2 py-1 bg-transparent text-center text-green-700 dark:text-green-300">Loading...</p>
+
+
+
+            <button
+            id="restore"
+            class="w-full px-5 py-3  text-black text-base font-bold rounded-lg
+                    hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-300
+                    transition duration-200 ease-in-out shadow-sm">
+            Restore History
+            </button>
+
+                    <!-- Modal -->
+        <div id="myModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+            <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-11/12 max-w-md relative">
+                <span id="closeModalBtn" class="absolute top-2 right-3 cursor-pointer text-gray-600 dark:text-gray-300 font-bold text-xl">&times;</span>
+                <h2 class="text-2xl text-gray-600 font-bold mb-4">Search & Delete a receipt</h2>
+                <form id="deleteForm">
+                    <label for="delete-id" class="block text-sm font-medium mb-1 text-gray-600">Enter Receipt Number</label>
+                    <input type="text" id="delete-id" placeholder="Receipt Number"
+                        class="w-full px-3 py-2 border text-gray-100 border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary" required>
+                    <br><br>
+                    <button type="submit" class="px-6 py-3 bg-red-600 text-white rounded hover:bg-red-700">
+                        Delete
+                    </button>
+                </form>
+                <div id="delete-result" class="mt-4"></div>
+            </div>
+        </div>
+
+<script>
+          document.addEventListener("DOMContentLoaded", () => {
+        const openBtn = document.getElementById("openModalBtn");
+        const modal = document.getElementById("myModal");
+        const closeBtn = document.getElementById("closeModalBtn");
+
+        // Open modal when button is clicked
+        openBtn.addEventListener("click", () => {
+            modal.classList.remove("hidden");
+        });
+
+        // Close modal when X is clicked
+        closeBtn.addEventListener("click", () => {
+            modal.classList.add("hidden");
+            location.reload();
+        });
+
+        // Close modal if user clicks outside the modal content
+        modal.addEventListener("click", (e) => {
+            if (e.target === modal) {
+                modal.classList.add("hidden");
+                location.reload();
+            }
+        });
+    });
+</script>
+ <script type="module" src="/receipts/fetchReceipts.js"></script>
+ <script type="module" src="/receipts/clearall.js"></script>
+ <script type="module" src="/receipts/restore.js"></script>
+ <script type="module" src="/receipts/delete.js"></script>
+ <script src="/core/amountTowords.js"></script>
+</body>
+</html>

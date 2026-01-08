@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multipurpose Receipt Generator</title>
+    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+     <script>
+        if (!navigator.onLine){
+            document.write('<script src="assets/css/tailwindcdn.js"><\/script>');
+        } else (
+             document.write('<script src="https://cdn.tailwindcss.com"><\/script>')
+        )
+     </script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-2xl bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 md:p-8">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+            <h1 class="text-2xl md:text-3xl font-bold">My Receipt Generator</h1>
+            <button id="theme-toggle" class="px-4 py-2 bg-primary text-white rounded hover:bg-blue-600 focus:outline-none text-sm">
+                Dark Mode
+            </button>
+        </div>
+
+        <form id="receipt-form" class="space-y-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label for="business-name" class="block text-sm font-medium mb-1">Issuer / Business Name</label>
+                    <input type="text" id="business-name" placeholder="e.g. ABC School, Landlord Name" 
+                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary" required>
+                </div>
+                <div>
+                    <label for="receipt-number" class="block text-sm font-medium mb-1">Receipt Number</label>
+                    <input type="text" id="receipt-number" 
+                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary" readonly required>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label for="date" class="block text-sm font-medium mb-1">Date</label>
+                    <input type="date" id="date" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary" required>
+                </div>
+                <div>
+                    <label for="customer-name" class="block text-sm font-medium mb-1">Received From (Name)</label>
+                    <input type="text" id="customer-name" placeholder="e.g. John Doe"
+                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary" required>
+                </div>
+            </div>
+
+            <div>
+                <label for="purpose" class="block text-sm font-medium mb-1">Purpose of Payment</label>
+                <select id="purpose" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary" required>
+                    <option value="" disabled selected>Select purpose</option>
+                    <option value="Rent Payment">Rent Payment</option>
+                    <option value="School Fees">School Fees</option>
+                    <option value="Tuition Fees">Tuition Fees</option>
+                    <option value="Product Purchase">Product Purchase / Sales</option>
+                    <option value="Service Payment">Service Payment</option>
+                    <option value="Utility Bill">Utility Bill</option>
+                    <option value="Other">Other (Specify)</option>
+                </select>
+            </div>
+
+            <div id="custom-purpose-container" class="hidden">
+                <label for="custom-purpose" class="block text-sm font-medium mb-1">Custom Purpose</label>
+                <input type="text" id="custom-purpose" placeholder="e.g. Donation, Medical Fee, etc."
+                       class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary">
+            </div>
+
+            <div>
+                <label for="amount" class="block text-sm font-medium mb-1">Amount Paid (₦)</label>
+                <input type="number" id="amount" min="0" step="0.01" placeholder="0.00"
+                       class="w-full px-4 py-3 text-lg font-semibold border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary" required>
+            </div>
+
+            <button type="submit" class="w-full px-6 py-4 bg-primary text-white text-lg font-semibold rounded hover:bg-blue-600 focus:outline-none transition">
+                Generate Receipt Preview
+            </button>
+        </form><br><br>
+        <p id="errorMsg" 
+            class="text-sm sm:text-base md:text-lg text-red-600 dark:text-red-400 font-medium px-4 py-2 rounded-md text-center w-full max-w-md mx-auto mt-4">
+        </p>
+        <br>
+
+
+        <div class="mt-12 text-center">
+            <button id="historyBtn" class="px-6 py-3 bg-gray-600 text-white rounded hover:bg-gray-700">
+                View history
+            </button>
+            <button id="openModalBtn" class="px-6 py-3 bg-gray-600 text-white rounded hover:bg-gray-700">
+                verify receipt
+            </button>
+        </div>
+
+        <!-- Modal -->
+        <div id="myModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+            <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-11/12 max-w-md relative">
+                <span id="closeModalBtn" class="absolute top-2 right-3 cursor-pointer text-gray-600 dark:text-gray-300 font-bold text-xl">&times;</span>
+                <h2 class="text-2xl font-bold mb-4">Receipt Verification</h2>
+                <form id="verifyForm">
+                    <label for="verify-text" class="block text-sm font-medium mb-1">Enter Receipt Number</label>
+                    <input type="text" id="receipt-id" placeholder="Receipt Number"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary" required>
+                    <br><br>
+                    <button type="submit" id="verifyBtn" class="px-6 py-3 bg-gray-600 text-white rounded hover:bg-gray-700">
+                        Verify
+                    </button>
+                </form>
+                <div id="verify-result" class="mt-4"></div>
+            </div>
+        </div>
+
+
+        <footer class="flex justify-center">
+            <p class="px-2 py-1 bg-transparent text-center text-gray-700 dark:text-gray-300">
+                powered by Ayomide DevStudio 
+                <!-- <a href="www.ayomidedevstudio.rf.gd"> →</a> -->
+            </p>
+        </footer>
+    </div>
+    <script>
+        //  document.getElementById("verifyBtn").addEventListener("click", () => {
+        //     window.open("verify.html", "_blank");
+        //     });
+        document.addEventListener("DOMContentLoaded", () => {
+        const openBtn = document.getElementById("openModalBtn");
+        const modal = document.getElementById("myModal");
+        const closeBtn = document.getElementById("closeModalBtn");
+
+        // Open modal when button is clicked
+        openBtn.addEventListener("click", () => {
+            modal.classList.remove("hidden");
+        });
+
+        // Close modal when X is clicked
+        closeBtn.addEventListener("click", () => {
+            modal.classList.add("hidden");
+        });
+
+        // Close modal if user clicks outside the modal content
+        modal.addEventListener("click", (e) => {
+            if (e.target === modal) {
+                modal.classList.add("hidden");
+            }
+        });
+    });
+
+        document.getElementById("historyBtn").addEventListener("click", () => {
+            window.open("history.html", "_blank");
+            });
+
+            //register SW
+            if ('serviceWorker' in navigator){
+                navigator.serviceWorker.register('/service-worker.js')
+                .then(() => console.log('Offline Mode Enabled!'))
+                .catch(err => console.log('Sw failed', err))
+                navigator.serviceWorker.ready.then(reg => {
+                    console.log('Sw is active...')
+                })
+            }
+
+            //detect if nline or offline
+            window.addEventListener("online", () =>{
+                alert('Back Online')
+            })
+            window.addEventListener("offline", () => {
+                alert('You are Offline!')
+            })
+    </script>
+    
+
+    <script src="assets/js/index.js"></script>
+    <script src="/core/validateInput.js"></script>
+    <script src="/core/receiptNumber.js"></script>
+    <script type = "module" src="/receipts/createReceipts.js"></script>
+    <script type = "module" src="/receipts/verifyReceipts.js"></script>
+    <script src="/core/amountTowords.js"></script>
+</body>
+</html>
